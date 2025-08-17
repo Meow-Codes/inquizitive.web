@@ -47,7 +47,6 @@
 
 import Pg from 'pg';
 import dotenv from 'dotenv';
-import { MongoClient } from 'mongodb';
 
 dotenv.config();
 
@@ -58,7 +57,7 @@ const dbConfig = {
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  ssl: false // If using RDS with SSL required, set this to { rejectUnauthorized: false }
+  ssl: false
 };
 
 const db = new Pg.Client(dbConfig);
@@ -67,19 +66,6 @@ db.connect()
   .then(() => console.log("✅ Connected to PostgreSQL"))
   .catch((err) => console.error("❌ PostgreSQL connection error:", err));
 
-// MongoDB Atlas Configuration
-const mongoClient = new MongoClient(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// No MongoDB code here anymore
 
-let mongoDb;
-
-mongoClient.connect()
-  .then(() => {
-    mongoDb = mongoClient.db('quizdb');
-    console.log("✅ Connected to MongoDB Atlas");
-  })
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-export { db, mongoDb };
+export { db }; // Only export the PostgreSQL client

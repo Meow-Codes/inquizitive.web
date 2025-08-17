@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { db, mongoDb } from "../config.js";
+import { db } from "../config.js";
 import {
   sendVerificationEmail,
   sendresetpassword,

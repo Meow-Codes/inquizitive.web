@@ -1,4 +1,4 @@
-import { db, mongoDb } from "../config.js";
+import { db } from "../config.js";
 
 const sendError = (res, statusCode, message) =>
   res.status(statusCode).json({ error: message });

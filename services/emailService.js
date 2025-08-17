@@ -243,3 +243,70 @@ export const sendNotificationEmail = async (email, subject, content) => {
         throw new Error("Failed to send notification email");
     }
 };
+
+/**
+ * Sends a confirmation email to the team leader after successful event registration.
+ * @param {object} registrationData - The registration data object.
+ */
+export const sendRegistrationSuccessEmail = async (registrationData) => {
+    const { teamLeaderName, leadMailId, teamName, members } = registrationData;
+    const subject = `Registration Successful for ${teamName}!`;
+    
+    // Dynamically generate the team members list for the email body
+    const memberListHtml = members.map((m, index) => `<li style="margin-bottom: 5px;"><strong>Member ${index + 1}:</strong> ${m.name} (${m.id})</li>`).join('');
+
+    const htmlContent = `
+        <p>Hello ${teamLeaderName},</p>
+        <p>Congratulations! Your team, <strong>${teamName}</strong>, has been successfully registered for the event.</p>
+        <p>Here are your team details:</p>
+        <ul style="padding-left: 20px;">
+            <li style="margin-bottom: 5px;"><strong>Team Leader:</strong> ${teamLeaderName} (${registrationData.teamLeaderId})</li>
+            ${memberListHtml}
+        </ul>
+        <p>Awaiting approval from the quiz master. Once your presence is acknowledged, you will receive a follow-up email.</p>
+        <p>Best regards,<br/>The InQuizitive Club Team</p>
+    `;
+
+    const mailOptions = {
+        from: `InQuizitive Club <${process.env.EMAIL_USER}>`,
+        to: leadMailId,
+        subject: subject,
+        html: createEmailTemplate(subject, htmlContent, subject),
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Registration success email sent: " + info.response);
+    } catch (error) {
+        console.error("Error sending registration success email:", error);
+    }
+};
+
+/**
+ * Sends a notification to the team leader confirming their presence is acknowledged.
+ * @param {string} email - The team leader's email.
+ * @param {string} teamName - The team's name.
+ */
+export const sendPresenceAcknowledgedEmail = async (email, teamName) => {
+    const subject = "Your Presence is Acknowledged";
+    const htmlContent = `
+        <p>Hello,</p>
+        <p>This is a confirmation that your team, <strong>${teamName}</strong>, has been marked as present for the event.</p>
+        <p>We look forward to seeing you at the event!</p>
+        <p>Best regards,<br/>The InQuizitive Club Team</p>
+    `;
+
+    const mailOptions = {
+        from: `InQuizitive Club <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: subject,
+        html: createEmailTemplate(subject, htmlContent, subject),
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Presence acknowledged email sent: " + info.response);
+    } catch (error) {
+        console.error("Error sending presence acknowledged email:", error);
+    }
+};

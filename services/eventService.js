@@ -1,5 +1,5 @@
 // Import database client configuration
-import client from '../config.js';
+import { db as client } from '../config.js';
 
 // Service function to create an event in the database
 export const createEvent = async (organizerId, eventData) => {
